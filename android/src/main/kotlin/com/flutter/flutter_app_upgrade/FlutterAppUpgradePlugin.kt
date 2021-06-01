@@ -1,5 +1,6 @@
 package com.flutter.flutter_app_upgrade
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -44,6 +45,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
   }
 
   companion object {
+    @SuppressLint("StaticFieldLeak")
     lateinit var mContext: Context
 
     @JvmStatic
@@ -59,7 +61,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
     if (call.method == "getAppInfo") {
       getAppInfo(mContext, result)
     } else if (call.method == "getApkDownloadPath") {
-      result.success(mContext.getExternalFilesDir("").absolutePath)
+      result.success(mContext.getExternalFilesDir("")?.absolutePath)
     } else if (call.method == "install") {
       //安装app
       val path = call.argument<String>("path")
@@ -124,7 +126,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
       if (nameEmpty || classEmpty) {
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       } else {
-        goToMarket.setClassName(marketPackageName, marketClassName)
+        goToMarket.setClassName(marketPackageName!!, marketClassName!!)
       }
       context.startActivity(goToMarket)
     } catch (e: ActivityNotFoundException) {
@@ -152,6 +154,7 @@ public class FlutterAppUpgradePlugin : FlutterPlugin, MethodCallHandler, Activit
    * 是否存在当前应用市场
    *
    */
+  @SuppressLint("WrongConstant")
   fun isPackageExist(context: Context, packageName: String?): Boolean {
     val manager = context.packageManager
     val intent = Intent().setPackage(packageName)
